@@ -1,0 +1,62 @@
+name: Deploy to Google Cloud
+on: [push]
+jobs:
+  deploy:
+    name: GCP Authenticate
+    runs-on: ubuntu-latest
+    steps:
+    # https://help.github.com/en/github/automating-your-workflow-with-github-actions/virtual-environments-for-github-actions
+    # If you don't use the actions/checkout action, the directory will be empty. For example, /home/runner/work/my-repo-name/my-repo-name.
+    - name: Repo Checkout to Master
+      uses: actions/checkout@master
+
+    - name: Setup Google Cloud
+      uses: actions/gcloud/auth@master
+      env:
+        # https://github.com/actions/gcloud/issues/13#issuecomment-511596628
+        GCLOUD_AUTH: ${{ secrets.GCLOUD_AUTH }}
+
+    - name: Set Default ProjectID
+      run: |
+        gcloud config set project ${{ secrets.ProjectID }}
+
+    - name: Setup Google Cloud Deploy Key
+      run: |
+        echo ${{ secrets.GCLOUD_AUTH }} | base64 -d > deploy-key.json
+        gcloud auth activate-service-account --key-file ./deploy-key.json
+
+    - name: Setup Signed Url Key
+      run: |
+        echo ${{ secrets.SignedUrlKey }} | base64 -d > signed-url-key.json
+
+    - name: List Files
+      run: |
+        ls -la
+
+    - name: Create Bucket If Needed
+      run: |
+        gsutil ls -b -p ${{ secrets.ProjectID }} gs://${{ secrets.BucketName1 }} || gsutil mb -b on -c Standard -p ${{ secrets.ProjectID }} -l asia gs://${{ secrets.BucketName1 }}
+        gsutil ls -b -p ${{ secrets.ProjectID }} gs://${{ secrets.BucketName2 }} || gsutil mb -b on -c Standard -p ${{ secrets.ProjectID }} -l asia gs://${{ secrets.BucketName2 }}
+
+    - name: Testing Allow All Bucket Name
+      run: |
+        gcloud functions deploy sign --entry-point=SignedUrl --runtime=go111 --trigger-http --quiet --set-env-vars SERVICE_JSON_FILE=signed-url-key.json
+        curl -k -X POST -F "bucket=${{ secrets.BucketName1 }}" -F "method=POST" -F "object=hello.txt" https://us-central1-${{ secrets.ProjectID }}.cloudfunctions.net/sign
+
+    - name: Testing Single Bucket Name
+      run: |
+        gcloud functions deploy sign --entry-point=SignedUrl --runtime=go111 --trigger-http --quiet --set-env-vars SERVICE_JSON_FILE=signed-url-key.json,BUCKET_NAME=${{ secrets.BucketName1 }}
+        curl -k -X POST -F "method=POST" -F "object=hello.txt" https://us-central1-${{ secrets.ProjectID }}.cloudfunctions.net/sign
+        curl -k -X POST -F "bucket=${{ secrets.BucketName1 }}" -F "method=POST" -F "object=hello.txt" https://us-central1-${{ secrets.ProjectID }}.cloudfunctions.net/sign
+
+    - name: Testing Multiple Bucket Name
+      run: |
+        gcloud functions deploy sign --entry-point=SignedUrl --runtime=go111 --trigger-http --quiet --set-env-vars SERVICE_JSON_FILE=signed-url-key.json,BUCKET_NAME=${{ secrets.BucketName1 }}:${{ secrets.BucketName2 }}
+        curl -k -X POST -F "bucket=${{ secrets.BucketName1 }}" -F "method=POST" -F "object=hello.txt" https://us-central1-${{ secrets.ProjectID }}.cloudfunctions.net/sign
+        curl -k -X POST -F "bucket=${{ secrets.BucketName2 }}" -F "method=POST" -F "object=hello.txt" https://us-central1-${{ secrets.ProjectID }}.cloudfunctions.net/sign
+
+    - name: Delete Cloud Function
+      run: |
+        gcloud functions delete sign
+
+

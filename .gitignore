@@ -1,0 +1,11 @@
+# signed url key
+signed-url-key.json
+deploy-key.json
+
+# mac
+.DS_Store
+
+# vim
+*.swp
+*.swo
+
