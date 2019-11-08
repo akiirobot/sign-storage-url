@@ -1,4 +1,4 @@
-name: Deploy to Google Cloud
+name: DeployToGoogleCloud
 on: [push]
 jobs:
   deploy:
@@ -57,6 +57,6 @@ jobs:
 
     - name: Delete Cloud Function
       run: |
-        gcloud functions delete sign
+        gcloud functions delete sign --quiet
 
 

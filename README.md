@@ -1,4 +1,7 @@
-# Sign
+
+![](https://github.com/akiirobot/sign-storage-url/workflows/DeployToGoogleCloud/badge.svg)
+
+# Sign Storage Url API
 
 This is a micro service that implement the [V4 signing process with Cloud Storage tools](https://cloud.google.com/storage/docs/access-control/signing-urls-with-helpers#storage-signed-url-get-object-go) on Google Cloud Function. You don't need to write the signing process in you program. Just call this e
 
@@ -96,14 +99,22 @@ generate deploying to Google Cloud Function key
 
 ```shell
 # Create Service Account
-gcloud iam service-accounts create "deploy-app-engine" --display-name "deploy-app-engine"
+gcloud iam service-accounts create "deploy-app" --display-name "deploy-app"
 
 # Grant Service Account with cloud functions developer for deploy
 gcloud projects add-iam-policy-binding ${ProjectID} \
-  --member serviceAccount:deploy-app-engine@${ProjectID}.iam.gserviceaccount.com \
+  --member serviceAccount:deploy-app@${ProjectID}.iam.gserviceaccount.com \
+  --role roles/iam.serviceAccountUser
+
+gcloud projects add-iam-policy-binding ${ProjectID} \
+  --member serviceAccount:deploy-app@${ProjectID}.iam.gserviceaccount.com \
   --role roles/cloudfunctions.developer
 
+gcloud projects add-iam-policy-binding ${ProjectID} \
+  --member serviceAccount:deploy-app@${ProjectID}.iam.gserviceaccount.com \
+  --role roles/storage.admin
+
 # Create Key
-gcloud iam service-accounts keys create deploy-key.json --iam-account deploy-app-engine@${ProjectID}.iam.gserviceaccount.com
+gcloud iam service-accounts keys create deploy-key.json --iam-account deploy-app@${ProjectID}.iam.gserviceaccount.com
 ```
 
