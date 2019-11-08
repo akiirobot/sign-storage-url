@@ -3,9 +3,13 @@
 
 # Sign Storage Url API
 
-This is a micro service that implement the [V4 signing process with Cloud Storage tools](https://cloud.google.com/storage/docs/access-control/signing-urls-with-helpers#storage-signed-url-get-object-go) on Google Cloud Function. You don't need to write the signing process in you program. Just call this e
+This is a micro service that implement the [V4 signing process with Cloud Storage tools](https://cloud.google.com/storage/docs/access-control/signing-urls-with-helpers#storage-signed-url-get-object-go) on Google Cloud Function. You don't need to write the signing process in you program. Just call this Sign Storage Url API after you deploy to google cloud function.
 
-## Setup Google Cloud Project
+## Before Start
+
+### Setup Google Cloud Project
+
+Create a Google Cloud Project from [here](https://console.cloud.google.com/projectcreate) and set on terminal.
 
 ```shell
 export ProjectID=<project_id>
@@ -14,7 +18,7 @@ export ProjectID=<project_id>
 gcloud config set project ${ProjectID}
 ```
 
-## Create Google Cloud Storage If Needed
+### Create Google Cloud Storage If Needed
 
 You can change the storage location and default storage class.
 
@@ -25,7 +29,7 @@ export BucketName=<bucket_name>
 gsutil mb -b on -c Standard -p ${ProjectID} -l asia gs://${BucketName}
 ```
 
-## Get Signed Url Key
+### Get Signed Url Key
 
 After running the commands below, you will get the **signed-url-key.json** file under the current folder. You will need it on the next step.
 
@@ -77,7 +81,6 @@ You can get the signed url from running the following command
 curl -k -X POST -F "bucket=<bucket-name>" -F "method=POST" -F "object=hello.txt" https://<gcloud-function-url>/sign
 ```
 
-
 ### Limit Single Storage Bucket
 
 ```shell
@@ -87,7 +90,7 @@ gcloud functions deploy sign --entry-point=SignedUrl --runtime=go111 --trigger-h
 
 **Testing**
 
-you can ignore bucket form data if you depoly a single storage bucket
+You can ignore bucket form data if you depoly a single storage bucket
 
 ```shell
 curl -k -X POST -F "method=POST" -F "object=hello.txt" https://<gcloud-function-url>/sign
@@ -95,7 +98,10 @@ curl -k -X POST -F "method=POST" -F "object=hello.txt" https://<gcloud-function-
 
 ## Create CI/CD Deploy Key
 
-generate deploying to Google Cloud Function key
+Grant the Required permission:
+- **roles/iam.serviceAccountUser**: Can act as the service account to start a Google Cloud Function.
+- **roles/cloudfunctions.developer**: Deploy to Google Cloud Function
+- **roles/storage.admin**: Create or delete a storage, and sign the storage url
 
 ```shell
 # Create Service Account
@@ -105,11 +111,9 @@ gcloud iam service-accounts create "deploy-app" --display-name "deploy-app"
 gcloud projects add-iam-policy-binding ${ProjectID} \
   --member serviceAccount:deploy-app@${ProjectID}.iam.gserviceaccount.com \
   --role roles/iam.serviceAccountUser
-
 gcloud projects add-iam-policy-binding ${ProjectID} \
   --member serviceAccount:deploy-app@${ProjectID}.iam.gserviceaccount.com \
   --role roles/cloudfunctions.developer
-
 gcloud projects add-iam-policy-binding ${ProjectID} \
   --member serviceAccount:deploy-app@${ProjectID}.iam.gserviceaccount.com \
   --role roles/storage.admin
