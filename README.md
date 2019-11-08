@@ -96,7 +96,9 @@ You can ignore bucket form data if you depoly a single storage bucket
 curl -k -X POST -F "method=POST" -F "object=hello.txt" https://<gcloud-function-url>/sign
 ```
 
-## Create CI/CD Deploy Key
+## Create CI/CD Deploy Key (Optional)
+
+This key can be used in CI/CD.
 
 Grant the Required permission:
 - **roles/iam.serviceAccountUser**: Can act as the service account to start a Google Cloud Function.
