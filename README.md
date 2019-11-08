@@ -7,6 +7,14 @@ This is a micro service that implement the [V4 signing process with Cloud Storag
 
 ## Before Start
 
+### Environment Variable
+
+| Environment  Varibale | Required | Description |
+|-----------------------|----------|---|
+| SERVICE_JSON_FILE     | required | This is a key for signing storage. see [Get Signed Url Key](#Get Signed Url Key) |
+| BUCKET_NAME           | optional | Add the multiple buckets separated by colon **:** to your white lists or leave blank for all buckets. |
+| EXPIRE_TIME           | optional | How much time (minute) the sign url is valid. 15 minutes is default value. |
+
 ### Setup Google Cloud Project
 
 Create a Google Cloud Project from [here](https://console.cloud.google.com/projectcreate) and set on terminal.

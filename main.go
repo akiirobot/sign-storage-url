@@ -8,6 +8,7 @@ import (
         "log"
         "time"
         "strings"
+        "strconv"
         "net/http"
         "io/ioutil"
         "golang.org/x/oauth2/google"
@@ -41,6 +42,11 @@ func SignedUrl(w http.ResponseWriter, r *http.Request) {
     return
   }
 
+  expireTime, err := strconv.Atoi(os.Getenv("EXPIRE_TIME"))
+  if err != nil {
+    expireTime = 15
+  }
+
   conf, err := google.JWTConfigFromJSON(jsonKey)
   if err != nil {
     log.Fatalln("google.JWTConfigFromJSON: %v", err)
@@ -54,7 +60,7 @@ func SignedUrl(w http.ResponseWriter, r *http.Request) {
     Method:         method,
     GoogleAccessID: conf.Email,
     PrivateKey:     conf.PrivateKey,
-    Expires:        time.Now().Add(15 * time.Minute),
+    Expires:        time.Now().Add(time.Duration(expireTime) * time.Minute),
   }
 
   u, err := storage.SignedURL(bucketName, objectName, opts)
