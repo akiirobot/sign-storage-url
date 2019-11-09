@@ -9,10 +9,10 @@ This is a micro service that implement the [V4 signing process with Cloud Storag
 
 ### Environment Variable
 
-| Environment Varibale | Required | Description |
+| Environment Varibale  | Required | Description |
 |-----------------------|----------|---|
-| SERVICE_JSON_FILE     | required | This is a key for signing storage. see [Get Signed Url Key](#Get Signed Url Key) |
-| BUCKET_NAME           | optional | Add the multiple buckets separated by colon **:** to your white lists or leave blank for all buckets. |
+| **SERVICE_JSON_FILE** | required | This is a key for signing storage. see [Get Signed Url Key](#Get Signed Url Key) |
+| **BUCKET_NAME**       | optional | Add the multiple buckets separated by colon **:** to your white lists or leave blank for all buckets. |
 
 ### Setup Google Cloud Project
 
