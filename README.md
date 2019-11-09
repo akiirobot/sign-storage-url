@@ -9,11 +9,10 @@ This is a micro service that implement the [V4 signing process with Cloud Storag
 
 ### Environment Variable
 
-| Environment  Varibale | Required | Description |
+| Environment Varibale | Required | Description |
 |-----------------------|----------|---|
 | SERVICE_JSON_FILE     | required | This is a key for signing storage. see [Get Signed Url Key](#Get Signed Url Key) |
 | BUCKET_NAME           | optional | Add the multiple buckets separated by colon **:** to your white lists or leave blank for all buckets. |
-| EXPIRE_TIME           | optional | How much time (minute) the sign url is valid. 15 minutes is default value. |
 
 ### Setup Google Cloud Project
 
@@ -56,6 +55,13 @@ gcloud iam service-accounts keys create signed-url-key.json --iam-account signed
 
 ## Deploy to Google cloud Function
 
+| Varibale     | Required | Description |
+|--------------|----------|---|
+| **bucket**   | required | The bucket you want to access. You are able to skip this variable if there is only one bucket name in **BUCKET_NAME**. |
+| **method**   | required | What action you want to process. |
+| **object**   | required | The file name you want to access. |
+| **time**     | optional | How much time (minute) the sign url is valid. 15 minutes is default value. |
+
 ### Allow All Storage Bucket
 
 ```shell
@@ -69,6 +75,12 @@ You can get the signed url from running the following command
 
 ```shell
 curl -k -X POST -F "bucket=<bucket-name>" -F "method=POST" -F "object=hello.txt" https://<gcloud-function-url>/sign
+```
+
+Add the optional time:
+
+```shell
+curl -k -X POST -F "bucket=<bucket-name>" -F "method=POST" -F "object=hello.txt" -F "time=30" https://<gcloud-function-url>/sign
 ```
 
 ### Limit Multiple Storage Bucket

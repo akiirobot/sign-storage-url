@@ -42,7 +42,7 @@ func SignedUrl(w http.ResponseWriter, r *http.Request) {
     return
   }
 
-  expireTime, err := strconv.Atoi(os.Getenv("EXPIRE_TIME"))
+  expireTime, err := strconv.Atoi(r.FormValue("time"))
   if err != nil {
     expireTime = 15
   }
