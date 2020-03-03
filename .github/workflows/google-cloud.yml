@@ -21,14 +21,14 @@ jobs:
       with:
         args: version
       
-    # - name: Set Default ProjectID
-    #   run: |
-    #     gcloud config set project ${{ secrets.ProjectID }}
+    - name: Set Default ProjectID
+      run: |
+        gcloud config set project ${{ secrets.ProjectID }}
 
-    # - name: Setup Google Cloud Deploy Key
-    #   run: |
-    #     echo ${{ secrets.GCLOUD_AUTH }} | base64 -d > deploy-key.json
-    #     gcloud auth activate-service-account --key-file ./deploy-key.json
+    - name: Setup Google Cloud Deploy Key
+      run: |
+        echo ${{ secrets.GCLOUD_AUTH }} | base64 -d > deploy-key.json
+        gcloud auth activate-service-account --key-file ./deploy-key.json
 
     - name: Setup Signed Url Key
       run: |
