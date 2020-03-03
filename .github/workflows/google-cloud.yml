@@ -15,10 +15,10 @@ jobs:
 
     - name: Setup Google Cloud
       uses: actions-hub/gcloud@master
-     #env:
-     #  PROJECT_ID: ${{ secrets.ProjectID }}
-     #  APPLICATION_CREDENTIALS: ${{ secrets.GCLOUD_AUTH }}
-     #
+      env:
+        PROJECT_ID: ${{ secrets.ProjectID }}
+        # APPLICATION_CREDENTIALS: ${{ secrets.GCLOUD_AUTH }}
+      
 
     - name: Show gcloud version
       run: |
