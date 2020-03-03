@@ -1,24 +1,27 @@
 name: DeployToGoogleCloud
 on: [push]
+
 jobs:
   deploy:
     name: GCP Authenticate
     runs-on: ubuntu-latest
+
+
     steps:
     # https://help.github.com/en/github/automating-your-workflow-with-github-actions/virtual-environments-for-github-actions
     # If you don't use the actions/checkout action, the directory will be empty. For example, /home/runner/work/my-repo-name/my-repo-name.
     - name: Repo Checkout to Master
-      uses: actions/checkout@master
+      uses: actions/checkout@v1
 
     - name: Setup Google Cloud
-      uses: actions/gcloud/auth@master
+      uses: actions-hub/gcloud@master
       env:
-        # https://github.com/actions/gcloud/issues/13#issuecomment-511596628
-        GCLOUD_AUTH: ${{ secrets.GCLOUD_AUTH }}
+        PROJECT_ID: ${{ secrets.ProjectID }}
+        APPLICATION_CREDENTIALS: ${{secrets.GOOGLE_APPLICATION_CREDENTIALS}}
 
-    - name: Set Default ProjectID
-      run: |
-        gcloud config set project ${{ secrets.ProjectID }}
+   #- name: Set Default ProjectID
+   #  run: |
+   #    gcloud config set project ${{ secrets.ProjectID }}
 
     - name: Setup Google Cloud Deploy Key
       run: |
