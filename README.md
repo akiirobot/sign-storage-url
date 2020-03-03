@@ -104,7 +104,7 @@ curl -k -X POST -F "bucket=<bucket-name>" -F "method=POST" -F "object=hello.txt"
 ### Limit Single Storage Bucket
 
 ```shell
-gcloud functions deploy sign --entry-point=SignedUrl --runtime=go111 --trigger-http --quiet \
+gcloud functions deploy sign --source=src --entry-point=SignedUrl --runtime=go113 --trigger-http --quiet \
   --set-env-vars SERVICE_JSON_FILE=signed-url-key.json,BUCKET_NAME=<bucket-name1>
 ```
 
@@ -144,3 +144,14 @@ gcloud projects add-iam-policy-binding ${ProjectID} \
 gcloud iam service-accounts keys create deploy-key.json --iam-account deploy-app@${ProjectID}.iam.gserviceaccount.com
 ```
 
+## Import As Package
+
+```golang
+import "github.com/akiirobot/sign-storage-url/src/sign"
+
+url, err := sign.Sign(serviceAccount, whiteListBucket, objectName, method, bucket, timeStamp)
+if err != nil {
+  log.Fatalln(err)
+  http.Error(w, "403 - Status Forbidden - " + err.Error(), http.StatusForbidden)
+}
+```

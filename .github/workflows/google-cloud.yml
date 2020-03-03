@@ -40,7 +40,7 @@ jobs:
 
     - name: Testing Allow All Bucket Name
       run: |
-        gcloud functions deploy sign --entry-point=SignedUrl --runtime=go111 --trigger-http --quiet --set-env-vars SERVICE_JSON_FILE=signed-url-key.json
+        gcloud functions deploy sign --source=src --entry-point=SignedUrl --runtime=go111 --trigger-http --quiet --set-env-vars SERVICE_JSON_FILE=signed-url-key.json
         curl -k -X POST -F "bucket=${{ secrets.BucketName1 }}" -F "method=POST" -F "object=hello.txt" https://us-central1-${{ secrets.ProjectID }}.cloudfunctions.net/sign
 
     - name: Testing Single Bucket Name
