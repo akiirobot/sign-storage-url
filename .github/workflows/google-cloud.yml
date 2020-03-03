@@ -17,9 +17,8 @@ jobs:
       uses: actions-hub/gcloud@master
       env:
         PROJECT_ID: ${{ secrets.ProjectID }}
-        # APPLICATION_CREDENTIALS: ${{ secrets.GCLOUD_AUTH }}
+        APPLICATION_CREDENTIALS: ${{ secrets.GCLOUD_AUTH }}
       
-
     - name: Show gcloud version
       run: |
         gcloud version
