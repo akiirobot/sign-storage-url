@@ -1,6 +1,6 @@
 // gcloud functions deploy sign --entry-point=SignedUrl --runtime=go111 --trigger-http --quiet
 
-package main
+package sign
 
 import (
         "os"

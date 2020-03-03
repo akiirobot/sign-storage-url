@@ -18,19 +18,17 @@ jobs:
       env:
         PROJECT_ID: ${{ secrets.ProjectID }}
         APPLICATION_CREDENTIALS: ${{ secrets.GCLOUD_AUTH }}
+      with:
+        args: version
       
-    - name: Show gcloud version
-      run: |
-        gcloud version
+    # - name: Set Default ProjectID
+    #   run: |
+    #     gcloud config set project ${{ secrets.ProjectID }}
 
-    - name: Set Default ProjectID
-      run: |
-        gcloud config set project ${{ secrets.ProjectID }}
-
-    - name: Setup Google Cloud Deploy Key
-      run: |
-        echo ${{ secrets.GCLOUD_AUTH }} | base64 -d > deploy-key.json
-        gcloud auth activate-service-account --key-file ./deploy-key.json
+    # - name: Setup Google Cloud Deploy Key
+    #   run: |
+    #     echo ${{ secrets.GCLOUD_AUTH }} | base64 -d > deploy-key.json
+    #     gcloud auth activate-service-account --key-file ./deploy-key.json
 
     - name: Setup Signed Url Key
       run: |
@@ -47,7 +45,7 @@ jobs:
 
     - name: Testing Allow All Bucket Name
       run: |
-        gcloud functions deploy sign --source=src --entry-point=SignedUrl --runtime=go111 --trigger-http --quiet --set-env-vars SERVICE_JSON_FILE=signed-url-key.json
+        gcloud functions deploy sign --entry-point=SignedUrl --runtime=go111 --trigger-http --quiet --set-env-vars SERVICE_JSON_FILE=signed-url-key.json
         curl -k -X POST -F "bucket=${{ secrets.BucketName1 }}" -F "method=POST" -F "object=hello.txt" https://us-central1-${{ secrets.ProjectID }}.cloudfunctions.net/sign
 
     - name: Testing Single Bucket Name
