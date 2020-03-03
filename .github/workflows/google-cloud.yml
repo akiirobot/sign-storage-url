@@ -15,15 +15,17 @@ jobs:
 
     - name: Setup Google Cloud
       uses: actions-hub/gcloud@master
-      env:
-        PROJECT_ID: ${{ secrets.ProjectID }}
-        APPLICATION_CREDENTIALS: ${{secrets.GOOGLE_APPLICATION_CREDENTIALS}}
+     #env:
+     #  PROJECT_ID: ${{ secrets.ProjectID }}
+     #  APPLICATION_CREDENTIALS: ${{ secrets.GCLOUD_AUTH }}
 
-   #- name: Set Default ProjectID
-   #  run: |
-   #    gcloud config set project ${{ secrets.ProjectID }}
+    - name: Set Default ProjectID
+      uses: actions-hub/gcloud@master
+      run: |
+        gcloud config set project ${{ secrets.ProjectID }}
 
     - name: Setup Google Cloud Deploy Key
+      uses: actions-hub/gcloud@master
       run: |
         echo ${{ secrets.GCLOUD_AUTH }} | base64 -d > deploy-key.json
         gcloud auth activate-service-account --key-file ./deploy-key.json
